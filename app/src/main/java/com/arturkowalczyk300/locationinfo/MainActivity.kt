@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Paint.Align
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -15,12 +16,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.arturkowalczyk300.locationinfo.ui.theme.LocationInfoTheme
 
 const val REQUEST_PERMISSION_LOCATION = 1
@@ -40,73 +44,105 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
                 ) {
-                    Row(horizontalArrangement = Arrangement.Center) {
-                        Column(verticalArrangement = Arrangement.Center) {
-                            Text(text = "Data update count: $updateCounter", fontSize = 20.sp)
-                            Text(text = "lat: ${currentLocation.lat}", fontSize = 20.sp)
-                            Text(
-                                text = "lng: ${currentLocation.lng}",
-                                fontSize = 20.sp
-                            )
-                            Text(text = "alt: ${currentLocation.altitude}", fontSize = 20.sp)
-                            if (loading)
-                                Row(
-                                    horizontalArrangement = Arrangement.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            Row() {
-                                Button(
-                                    onClick = {
-                                        loading = !loading
 
-                                        if (!initDone) {
-                                            locationProvider =
-                                                LocationProvider.getInstance(applicationContext) { lat, lng, altitude, updateCount ->
-                                                    currentLocation.lat = lat
-                                                    currentLocation.lng = lng
-                                                    currentLocation.altitude = altitude
-                                                    updateCounter = updateCount
-                                                }
+                    Box(contentAlignment = Alignment.TopStart, modifier = Modifier.padding(10.dp)) {
+                        Row(horizontalArrangement = Arrangement.Center) {
+                            Column(verticalArrangement = Arrangement.Center) {
+                                Text(
+                                    text = "Data update count: $updateCounter",
+                                    fontSize = 23.sp,
+                                    modifier = Modifier.padding(0.dp, 10.dp)
+                                )
+                                Text(text = "lat: ${currentLocation.lat}", fontSize = 23.sp)
+                                Text(
+                                    text = "lng: ${currentLocation.lng}",
+                                    fontSize = 23.sp
+                                )
+                                Text(
+                                    text = "altitude: ${currentLocation.altitude}",
+                                    fontSize = 23.sp
+                                )
+                                if (loading)
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                            }
+                        }
+                    }
+                    Box(
+                        contentAlignment = Alignment.BottomCenter,
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Row() {
+                            Button(
+                                onClick = {
+                                    if (!initDone) {
+                                        locationProvider =
+                                            LocationProvider.getInstance(
+                                                applicationContext
+                                            ) { lat, lng, altitude, updateCount ->
+                                                currentLocation.lat = lat
+                                                currentLocation.lng = lng
+                                                currentLocation.altitude = altitude
+                                                updateCounter = updateCount
+                                            }
+                                        initDone = true
+                                    }
+                                    if (!loading) {
+                                        locationProvider!!.startGPSListening()
+                                    }
 
-                                            locationProvider!!.startGPSListening()
-                                            initDone = true
-                                        }
-                                    },
-                                    modifier = Modifier.padding(
-                                        PaddingValues(
-                                            5.dp,
-                                            0.dp,
-                                            5.dp,
-                                            0.dp
-                                        )
+                                    if (loading)
+                                        locationProvider?.stopGPSListening()
+                                    loading = !loading
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
+                                modifier = Modifier.padding(
+                                    PaddingValues(
+                                        3.dp,
+                                        0.dp,
+                                        3.dp,
+                                        0.dp
                                     )
-                                ) {
-                                    if (!loading)
-                                        Text("Start loading GPS data!")
-                                    else
-                                        Text("Stop loading GPS data!")
-                                }
-                                Button(
-                                    onClick = {
-                                        shareCurrentLocation(currentLocation)
-                                    },
-                                    modifier = Modifier.padding(
-                                        PaddingValues(
-                                            5.dp,
-                                            0.dp,
-                                            5.dp,
-                                            0.dp
-                                        )
+                                )
+                            ) {
+                                if (!loading)
+                                    Text(
+                                        text = "Start loading GPS data!",
+                                        fontSize = 17.sp
                                     )
-                                ) {
-                                    Text("Share GPS location!")
-                                }
+                                else
+                                    Text(
+                                        text = "Stop loading GPS data!",
+                                        fontSize = 17.sp
+                                    )
+                            }
+                            Button(
+                                onClick = {
+                                    shareCurrentLocation(currentLocation)
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
+                                modifier = Modifier.padding(
+                                    PaddingValues(
+                                        3.dp,
+                                        0.dp,
+                                        3.dp,
+                                        0.dp
+                                    )
+                                )
+                            ) {
+                                Text(
+                                    text = "Share GPS location!",
+                                    fontSize = 17.sp
+                                )
                             }
                         }
                     }
                 }
+
             }
         }
 

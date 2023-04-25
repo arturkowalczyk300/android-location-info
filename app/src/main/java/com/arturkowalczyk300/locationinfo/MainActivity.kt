@@ -53,13 +53,16 @@ class MainActivity : ComponentActivity() {
                                     fontSize = 23.sp,
                                     modifier = Modifier.padding(0.dp, 10.dp)
                                 )
-                                Text(text = "lat: ${currentLocation.lat}", fontSize = 23.sp)
                                 Text(
-                                    text = "lng: ${currentLocation.lng}",
+                                    text = "lat: %.10f".format(currentLocation.lat),
                                     fontSize = 23.sp
                                 )
                                 Text(
-                                    text = "altitude: ${currentLocation.altitude}",
+                                    text = "lng: %.10f".format(currentLocation.lng),
+                                    fontSize = 23.sp
+                                )
+                                Text(
+                                    text = "altitude: %.4f\"".format(currentLocation.altitude),
                                     fontSize = 23.sp
                                 )
                                 if (loading)
@@ -165,7 +168,11 @@ class MainActivity : ComponentActivity() {
 
     private fun shareCurrentLocation(location: com.arturkowalczyk300.locationinfo.Location) {
         val text =
-            "My current location: lat=${location.lat}, lng=${location.lng}, altitude=${location.altitude}"
+            "My current location: lat=%.10f, lng=%.10f, altitude=%.4f".format(
+                location.lat,
+                location.lng,
+                location.altitude
+            )
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.setType("text/plain")
         shareIntent.putExtra(Intent.EXTRA_TEXT, text)

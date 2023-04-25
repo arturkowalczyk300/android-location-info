@@ -10,6 +10,9 @@ import android.util.Log
 import androidx.core.content.ContextCompat.getSystemService
 
 class LocationProvider {
+    private var _locationManager: LocationManager? = null
+    private var _locationListener: LocationListener? = null
+
     companion object {
         private var _INSTANCE: LocationProvider? = null
         private var _context: Context? = null
@@ -26,41 +29,31 @@ class LocationProvider {
 
             return _INSTANCE as LocationProvider
         }
-
-
     }
+
     @SuppressLint("MissingPermission")
     fun startGPSListening() {
-        Log.e("myApp", "load gps data!")
-
-        val locationManager =
+        _locationManager =
             _context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val locationListener: LocationListener =
-            object : LocationListener {
-                override fun onStatusChanged(
-                    provider: String?,
-                    status: Int,
-                    extras: Bundle?,
-                ) {
-                    Log.e("myApp", "status=$status")
-                    super.onStatusChanged(provider, status, extras)
-                }
-
-                override fun onLocationChanged(location: Location) {
-                    _listenerLocationChanged.invoke(
-                        location.latitude,
-                        location.longitude,
-                        location.altitude,
-                        _updateCount++
-                    )
-                }
+        _locationListener =
+            LocationListener { location ->
+                _listenerLocationChanged.invoke(
+                    location.latitude,
+                    location.longitude,
+                    location.altitude,
+                    _updateCount++
+                )
             }
 
-        locationManager.requestLocationUpdates(
+        _locationManager!!.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             0,
             0f,
-            locationListener
+            _locationListener as LocationListener
         )
+    }
+
+    fun stopGPSListening() {
+        _locationManager!!.removeUpdates(_locationListener!!)
     }
 }

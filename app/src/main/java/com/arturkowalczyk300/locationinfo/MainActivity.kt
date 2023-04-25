@@ -2,19 +2,18 @@ package com.arturkowalczyk300.locationinfo
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,9 +49,17 @@ class MainActivity : ComponentActivity() {
                                 fontSize = 20.sp
                             )
                             Text(text = "alt: ${currentLocation.altitude}", fontSize = 20.sp)
+                            if (loading)
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    CircularProgressIndicator()
+                                }
                             Row() {
                                 Button(
-                                    onClick = { //todo: start
+                                    onClick = {
+                                        loading = !loading
 
                                         if (!initDone) {
                                             locationProvider =
@@ -76,11 +83,14 @@ class MainActivity : ComponentActivity() {
                                         )
                                     )
                                 ) {
-                                    Text("Get GPS data!")
+                                    if (!loading)
+                                        Text("Start loading GPS data!")
+                                    else
+                                        Text("Stop loading GPS data!")
                                 }
                                 Button(
                                     onClick = {
-
+                                        shareCurrentLocation(currentLocation)
                                     },
                                     modifier = Modifier.padding(
                                         PaddingValues(
@@ -117,24 +127,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    fun Greeting(name: String) {
-        Text(text = "Hello $name!")
+    private fun shareCurrentLocation(location: com.arturkowalczyk300.locationinfo.Location) {
+        val text =
+            "My current location: lat=${location.lat}, lng=${location.lng}, altitude=${location.altitude}"
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.setType("text/plain")
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text)
+        startActivity(Intent.createChooser(shareIntent, "Share via..."))
     }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun DefaultPreview() {
-        LocationInfoTheme {
-            Greeting("Android")
-        }
-    }
-
-    @Composable
-    fun gpsData(lat: Double, lng: Double, alt: Double) {
-
-    }
-
-
 }
 

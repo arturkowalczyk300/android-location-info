@@ -7,6 +7,7 @@ android {
     namespace 'com.arturkowalczyk300.locationinfo'
     compileSdk 33
 
+
     defaultConfig {
         applicationId "com.arturkowalczyk300.locationinfo"
         minSdk 26

@@ -34,14 +34,13 @@ class MainActivity : ComponentActivity() {
             var currentLocation by remember { mutableStateOf(Location(0.0, 0.0, 0.0)) }
             var updateCounter by remember { mutableStateOf(0) }
             var loading by remember { mutableStateOf(false) }
+            var initDone by remember { mutableStateOf(false) }
+            var locationProvider: LocationProvider? = null
             LocationInfoTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
                 ) {
-
-
                     Row(horizontalArrangement = Arrangement.Center) {
                         Column(verticalArrangement = Arrangement.Center) {
                             Text(text = "Data update count: $updateCounter", fontSize = 20.sp)
@@ -53,49 +52,20 @@ class MainActivity : ComponentActivity() {
                             Text(text = "alt: ${currentLocation.altitude}", fontSize = 20.sp)
                             Row() {
                                 Button(
-                                    onClick = {
-                                        updateCounter++
-                                        Log.e("myApp", "load gps data!")
+                                    onClick = { //todo: start
 
-                                        val locationManager =
-                                            getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                                        val locationListener: LocationListener =
-                                            object : LocationListener {
-                                                override fun onStatusChanged(
-                                                    provider: String?,
-                                                    status: Int,
-                                                    extras: Bundle?,
-                                                ) {
-                                                    Log.e("myApp", "status=$status")
-                                                    super.onStatusChanged(provider, status, extras)
+                                        if (!initDone) {
+                                            locationProvider =
+                                                LocationProvider.getInstance(applicationContext) { lat, lng, altitude, updateCount ->
+                                                    currentLocation.lat = lat
+                                                    currentLocation.lng = lng
+                                                    currentLocation.altitude = altitude
+                                                    updateCounter = updateCount
                                                 }
 
-                                                override fun onLocationChanged(location: Location) {
-                                                    updateCounter++
-                                                    currentLocation.lat = location.latitude
-                                                    currentLocation.lng = location.longitude
-                                                    currentLocation.altitude = location.altitude
-                                                    Log.e(
-                                                        "myApp",
-                                                        "new data, lat=${currentLocation.lat}," +
-                                                                " lng=${currentLocation.lng}," +
-                                                                " alt=${currentLocation.altitude}" +
-                                                                "satellites: ${
-                                                                    location.extras?.getInt(
-                                                                        "satellites"
-                                                                    )
-                                                                }"
-                                                    )
-
-                                                }
-                                            }
-
-                                        locationManager.requestLocationUpdates(
-                                            LocationManager.GPS_PROVIDER,
-                                            0,
-                                            0f,
-                                            locationListener
-                                        )
+                                            locationProvider!!.startGPSListening()
+                                            initDone = true
+                                        }
                                     },
                                     modifier = Modifier.padding(
                                         PaddingValues(
@@ -145,10 +115,6 @@ class MainActivity : ComponentActivity() {
                 REQUEST_PERMISSION_LOCATION
             )
         }
-    }
-
-    fun startListeningGpsDataChange() {
-
     }
 
     @Composable

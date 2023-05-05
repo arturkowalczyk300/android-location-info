@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">LocationInfo</string>
-    <string name="title_activity_main_compose">MainActivityCompose</string>
+    <string name="title_activity_main_compose">LocationInfo</string>
+    <string name="loading_gps_stop">Stop loading GPS data</string>
+    <string name="loading_gps_start">Start loading GPS data</string>
+    <string name="share_gps_location">Share GPS location</string>
+    <string name="count_data_updates">Data update count</string>
+    <string name="count_data_updates_values">%d</string>
+    <string name="location_info_lat">latitude</string>
+    <string name="location_info_lat_value">%.10f</string>
+    <string name="location_info_lng">longitude</string>
+    <string name="location_info_lng_value">%.10f</string>
+    <string name="location_info_altitude">altitude</string>
+    <string name="location_info_altitude_value">%.4fm</string>
 </resources>

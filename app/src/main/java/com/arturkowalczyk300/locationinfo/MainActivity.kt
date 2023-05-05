@@ -1,30 +1,24 @@
 package com.arturkowalczyk300.locationinfo
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Paint.Align
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
-import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import com.arturkowalczyk300.locationinfo.ui.theme.LocationInfoTheme
 
 const val REQUEST_PERMISSION_LOCATION = 1
@@ -45,102 +39,175 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background,
                 ) {
 
-                    Box(contentAlignment = Alignment.TopStart, modifier = Modifier.padding(10.dp)) {
-                        Row(horizontalArrangement = Arrangement.Center) {
-                            Column(verticalArrangement = Arrangement.Center) {
-                                Text(
-                                    text = "Data update count: $updateCounter",
-                                    fontSize = 23.sp,
-                                    modifier = Modifier.padding(0.dp, 10.dp)
-                                )
-                                Text(
-                                    text = "lat: %.10f".format(currentLocation.lat),
-                                    fontSize = 23.sp
-                                )
-                                Text(
-                                    text = "lng: %.10f".format(currentLocation.lng),
-                                    fontSize = 23.sp
-                                )
-                                Text(
-                                    text = "altitude: %.4f\"".format(currentLocation.altitude),
-                                    fontSize = 23.sp
-                                )
-                                if (loading)
+                    Box(contentAlignment = Alignment.TopStart, modifier = Modifier.padding(20.dp)) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(getString(R.string.count_data_updates), fontSize = 23.sp)
+                                    Text(
+                                        text = getString(R.string.count_data_updates_values).format(
+                                            updateCounter
+                                        ),
+                                        fontSize = 23.sp
+                                    )
+                                }
+                                if (loading) {
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                    if (loading)
+                                        Row(
+                                            horizontalArrangement = Arrangement.Center,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            CircularProgressIndicator(modifier = Modifier.size(100.dp))
+                                        }
+                                    else Spacer(modifier = Modifier.height(100.dp))
+                                    Spacer(modifier = Modifier.height(50.dp))
                                     Row(
-                                        horizontalArrangement = Arrangement.Center,
-                                        modifier = Modifier.fillMaxWidth()
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 10.dp, end = 10.dp)
                                     ) {
-                                        CircularProgressIndicator()
+                                        Text(
+                                            getString(R.string.location_info_lat), fontSize = 30.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = getString(R.string.location_info_lat_value).format(
+                                                currentLocation.lat
+                                            ),
+                                            fontSize = 30.sp
+                                        )
                                     }
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 10.dp, end = 10.dp)
+                                    ) {
+                                        Text(
+                                            getString(R.string.location_info_lng), fontSize = 30.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = getString(R.string.location_info_lng_value).format(
+                                                currentLocation.lng
+                                            ),
+                                            fontSize = 30.sp
+                                        )
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 10.dp, end = 10.dp)
+                                    ) {
+                                        Text(
+                                            getString(R.string.location_info_altitude),
+                                            fontSize = 30.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = getString(R.string.location_info_altitude_value).format(
+                                                currentLocation.altitude
+                                            ),
+                                            fontSize = 30.sp
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                     Box(
                         contentAlignment = Alignment.BottomCenter,
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 10.dp)
                     ) {
-                        Row() {
-                            Button(
-                                onClick = {
-                                    if (!initDone) {
-                                        locationProvider =
-                                            LocationProvider.getInstance(
-                                                applicationContext
-                                            ) { lat, lng, altitude, updateCount ->
-                                                currentLocation.lat = lat
-                                                currentLocation.lng = lng
-                                                currentLocation.altitude = altitude
-                                                updateCounter = updateCount
-                                            }
-                                        initDone = true
-                                    }
-                                    if (!loading) {
-                                        locationProvider!!.startGPSListening()
-                                    }
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.Bottom,
+                                modifier = Modifier.padding(horizontal = 0.dp, vertical = 10.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        if (!initDone) {
+                                            locationProvider =
+                                                LocationProvider.getInstance(
+                                                    applicationContext
+                                                ) { lat, lng, altitude, updateCount ->
+                                                    currentLocation.lat = lat
+                                                    currentLocation.lng = lng
+                                                    currentLocation.altitude = altitude
+                                                    updateCounter = updateCount
+                                                }
+                                            initDone = true
+                                        }
+                                        if (!loading) {
+                                            locationProvider!!.startGPSListening()
+                                        }
 
-                                    if (loading)
-                                        locationProvider?.stopGPSListening()
-                                    loading = !loading
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
-                                modifier = Modifier.padding(
-                                    PaddingValues(
-                                        3.dp,
-                                        0.dp,
-                                        3.dp,
-                                        0.dp
-                                    )
-                                )
-                            ) {
-                                if (!loading)
+                                        if (loading)
+                                            locationProvider?.stopGPSListening()
+                                        loading = !loading
+                                    },
+                                    shape = RoundedCornerShape(20),
+                                    colors = if (!loading) ButtonDefaults.buttonColors(
+                                        backgroundColor = Color(
+                                            42,
+                                            95,
+                                            44,
+                                            255
+                                        )
+                                    ) else ButtonDefaults.buttonColors(
+                                        backgroundColor = Color(
+                                            104, 34, 29, 255
+                                        )
+                                    ),
+                                    modifier = Modifier
+                                        .width(350.dp)
+                                        .padding(vertical = 15.dp)
+                                ) {
+                                    if (!loading)
+                                        Text(
+                                            text = getString(R.string.loading_gps_start),
+                                            fontSize = 22.sp,
+                                            modifier = Modifier.padding(vertical = 15.dp)
+                                        )
+                                    else
+                                        Text(
+                                            text = getString(R.string.loading_gps_stop),
+                                            fontSize = 22.sp,
+                                            modifier = Modifier.padding(vertical = 15.dp)
+                                        )
+                                }
+                                Button(
+                                    onClick = {
+                                        shareCurrentLocation(currentLocation)
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = Color(51, 66, 148, 255)
+                                    ),
+                                    shape = RoundedCornerShape(20),
+                                    modifier = Modifier
+                                        .width(350.dp)
+                                        .padding(top = 15.dp, bottom = 10.dp)
+                                ) {
                                     Text(
-                                        text = "Start loading GPS data!",
-                                        fontSize = 17.sp
+                                        text = getString(R.string.share_gps_location),
+                                        fontSize = 22.sp,
+                                        modifier = Modifier.padding(vertical = 15.dp)
                                     )
-                                else
-                                    Text(
-                                        text = "Stop loading GPS data!",
-                                        fontSize = 17.sp
-                                    )
-                            }
-                            Button(
-                                onClick = {
-                                    shareCurrentLocation(currentLocation)
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
-                                modifier = Modifier.padding(
-                                    PaddingValues(
-                                        3.dp,
-                                        0.dp,
-                                        3.dp,
-                                        0.dp
-                                    )
-                                )
-                            ) {
-                                Text(
-                                    text = "Share GPS location!",
-                                    fontSize = 17.sp
-                                )
+                                }
                             }
                         }
                     }
@@ -179,4 +246,3 @@ class MainActivity : ComponentActivity() {
         startActivity(Intent.createChooser(shareIntent, "Share via..."))
     }
 }
-

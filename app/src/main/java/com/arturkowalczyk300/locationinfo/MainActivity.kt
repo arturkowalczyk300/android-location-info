@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.arturkowalczyk300.locationinfo.ui.theme.LocationInfoTheme
 
 const val REQUEST_PERMISSION_LOCATION = 1
@@ -57,70 +58,17 @@ class MainActivity : ComponentActivity() {
                                         fontSize = 23.sp
                                     )
                                 }
+                                Spacer(modifier = Modifier.height(20.dp))
                                 if (loading) {
-                                    Spacer(modifier = Modifier.height(20.dp))
-                                    if (loading && !currentLocation.hasAccuracy)
+                                    if (!currentLocation.hasAccuracy) {
                                         Row(
                                             horizontalArrangement = Arrangement.Center,
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             CircularProgressIndicator(modifier = Modifier.size(100.dp))
                                         }
-                                    else Spacer(modifier = Modifier.height(100.dp))
-                                    Spacer(modifier = Modifier.height(50.dp))
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 10.dp, end = 10.dp)
-                                    ) {
-                                        Text(
-                                            getString(R.string.location_info_lat), fontSize = 29.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = getString(R.string.location_info_lat_value).format(
-                                                currentLocation.lat
-                                            ),
-                                            fontSize = 29.sp
-                                        )
-                                    }
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 10.dp, end = 10.dp)
-                                    ) {
-                                        Text(
-                                            getString(R.string.location_info_lng), fontSize = 29.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = getString(R.string.location_info_lng_value).format(
-                                                currentLocation.lng
-                                            ),
-                                            fontSize = 29.sp
-                                        )
-                                    }
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 10.dp, end = 10.dp)
-                                    ) {
-                                        Text(
-                                            getString(R.string.location_info_altitude),
-                                            fontSize = 29.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = getString(R.string.location_info_altitude_value).format(
-                                                currentLocation.altitude
-                                            ),
-                                            fontSize = 29.sp
-                                        )
-                                    }
-                                    if (currentLocation.hasAccuracy) {
+                                    } else {
+                                        Spacer(modifier = Modifier.height(50.dp))
                                         Row(
                                             horizontalArrangement = Arrangement.SpaceBetween,
                                             modifier = Modifier
@@ -128,16 +76,72 @@ class MainActivity : ComponentActivity() {
                                                 .padding(start = 10.dp, end = 10.dp)
                                         ) {
                                             Text(
-                                                getString(R.string.location_info_accuracy),
+                                                getString(R.string.location_info_lat),
                                                 fontSize = 29.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = getString(R.string.location_info_accuracy_value).format(
-                                                    currentLocation.accuracy
+                                                text = getString(R.string.location_info_lat_value).format(
+                                                    currentLocation.lat
                                                 ),
                                                 fontSize = 29.sp
                                             )
+                                        }
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(start = 10.dp, end = 10.dp)
+                                        ) {
+                                            Text(
+                                                getString(R.string.location_info_lng),
+                                                fontSize = 29.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = getString(R.string.location_info_lng_value).format(
+                                                    currentLocation.lng
+                                                ),
+                                                fontSize = 29.sp
+                                            )
+                                        }
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(start = 10.dp, end = 10.dp)
+                                        ) {
+                                            Text(
+                                                getString(R.string.location_info_altitude),
+                                                fontSize = 29.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = getString(R.string.location_info_altitude_value).format(
+                                                    currentLocation.altitude
+                                                ),
+                                                fontSize = 29.sp
+                                            )
+                                        }
+                                        if (currentLocation.hasAccuracy) {
+                                            Row(
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(start = 10.dp, end = 10.dp)
+                                            ) {
+                                                Text(
+                                                    getString(R.string.location_info_accuracy),
+                                                    fontSize = 29.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                                Text(
+                                                    text = getString(R.string.location_info_accuracy_value).format(
+                                                        currentLocation.accuracy
+                                                    ),
+                                                    fontSize = 29.sp
+                                                )
+                                            }
                                         }
                                     }
                                 }

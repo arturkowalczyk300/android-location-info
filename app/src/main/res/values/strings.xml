@@ -6,10 +6,12 @@
     <string name="share_gps_location">Share GPS location</string>
     <string name="count_data_updates">Data update count</string>
     <string name="count_data_updates_values">%d</string>
-    <string name="location_info_lat">latitude</string>
+    <string name="location_info_lat">Latitude</string>
     <string name="location_info_lat_value">%.10f</string>
-    <string name="location_info_lng">longitude</string>
+    <string name="location_info_lng">Longitude</string>
     <string name="location_info_lng_value">%.10f</string>
-    <string name="location_info_altitude">altitude</string>
+    <string name="location_info_altitude">Altitude</string>
     <string name="location_info_altitude_value">%.4fm</string>
+    <string name="location_info_accuracy">Accuracy</string>
+    <string name="location_info_accuracy_value">%.2fm</string>
 </resources>

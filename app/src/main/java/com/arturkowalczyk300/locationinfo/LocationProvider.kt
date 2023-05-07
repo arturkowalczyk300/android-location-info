@@ -17,11 +17,25 @@ class LocationProvider {
         private var _INSTANCE: LocationProvider? = null
         private var _context: Context? = null
         private var _updateCount = 0
-        private lateinit var _listenerLocationChanged: (lat: Double, lng: Double, altitude: Double, updateCount: Int) -> Unit
+        private lateinit var _listenerLocationChanged: (
+            lat: Double,
+            lng: Double,
+            altitude: Double,
+            hasAccuracy: Boolean,
+            accuracy: Float,
+            updateCount: Int,
+        ) -> Unit
 
         fun getInstance(
             context: Context,
-            listener: (lat: Double, lng: Double, altitude: Double, updateCount: Int) -> Unit,
+            listener: (
+                lat: Double,
+                lng: Double,
+                altitude: Double,
+                hasAccuracy: Boolean,
+                accuracy: Float,
+                updateCount: Int,
+            ) -> Unit,
         ): LocationProvider {
             _INSTANCE = _INSTANCE ?: LocationProvider()
             _context = context
@@ -33,23 +47,20 @@ class LocationProvider {
 
     @SuppressLint("MissingPermission")
     fun startGPSListening() {
-        _locationManager =
-            _context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        _locationListener =
-            LocationListener { location ->
-                _listenerLocationChanged.invoke(
-                    location.latitude,
-                    location.longitude,
-                    location.altitude,
-                    _updateCount++
-                )
-            }
+        _locationManager = _context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        _locationListener = LocationListener { location ->
+            _listenerLocationChanged.invoke(
+                location.latitude,
+                location.longitude,
+                location.altitude,
+                location.hasAccuracy(),
+                location.accuracy,
+                _updateCount++
+            )
+        }
 
         _locationManager!!.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            0,
-            0f,
-            _locationListener as LocationListener
+            LocationManager.GPS_PROVIDER, 0, 0f, _locationListener as LocationListener
         )
     }
 

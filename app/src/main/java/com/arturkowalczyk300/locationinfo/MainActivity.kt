@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var currentLocation by remember { mutableStateOf(Location(0.0, 0.0, 0.0)) }
+            var currentLocation by remember { mutableStateOf(Location(0.0, 0.0, 0.0, false, 0.0f)) }
             var updateCounter by remember { mutableStateOf(0) }
             var loading by remember { mutableStateOf(false) }
             var initDone by remember { mutableStateOf(false) }
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                                 }
                                 if (loading) {
                                     Spacer(modifier = Modifier.height(20.dp))
-                                    if (loading)
+                                    if (loading && !currentLocation.hasAccuracy)
                                         Row(
                                             horizontalArrangement = Arrangement.Center,
                                             modifier = Modifier.fillMaxWidth()
@@ -75,14 +75,14 @@ class MainActivity : ComponentActivity() {
                                             .padding(start = 10.dp, end = 10.dp)
                                     ) {
                                         Text(
-                                            getString(R.string.location_info_lat), fontSize = 30.sp,
+                                            getString(R.string.location_info_lat), fontSize = 29.sp,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
                                             text = getString(R.string.location_info_lat_value).format(
                                                 currentLocation.lat
                                             ),
-                                            fontSize = 30.sp
+                                            fontSize = 29.sp
                                         )
                                     }
                                     Row(
@@ -92,14 +92,14 @@ class MainActivity : ComponentActivity() {
                                             .padding(start = 10.dp, end = 10.dp)
                                     ) {
                                         Text(
-                                            getString(R.string.location_info_lng), fontSize = 30.sp,
+                                            getString(R.string.location_info_lng), fontSize = 29.sp,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
                                             text = getString(R.string.location_info_lng_value).format(
                                                 currentLocation.lng
                                             ),
-                                            fontSize = 30.sp
+                                            fontSize = 29.sp
                                         )
                                     }
                                     Row(
@@ -110,15 +110,35 @@ class MainActivity : ComponentActivity() {
                                     ) {
                                         Text(
                                             getString(R.string.location_info_altitude),
-                                            fontSize = 30.sp,
+                                            fontSize = 29.sp,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
                                             text = getString(R.string.location_info_altitude_value).format(
                                                 currentLocation.altitude
                                             ),
-                                            fontSize = 30.sp
+                                            fontSize = 29.sp
                                         )
+                                    }
+                                    if (currentLocation.hasAccuracy) {
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(start = 10.dp, end = 10.dp)
+                                        ) {
+                                            Text(
+                                                getString(R.string.location_info_accuracy),
+                                                fontSize = 29.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = getString(R.string.location_info_accuracy_value).format(
+                                                    currentLocation.accuracy
+                                                ),
+                                                fontSize = 29.sp
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -144,10 +164,12 @@ class MainActivity : ComponentActivity() {
                                             locationProvider =
                                                 LocationProvider.getInstance(
                                                     applicationContext
-                                                ) { lat, lng, altitude, updateCount ->
+                                                ) { lat, lng, altitude, hasAccuracy, accuracy, updateCount ->
                                                     currentLocation.lat = lat
                                                     currentLocation.lng = lng
                                                     currentLocation.altitude = altitude
+                                                    currentLocation.hasAccuracy = hasAccuracy
+                                                    currentLocation.accuracy = accuracy
                                                     updateCounter = updateCount
                                                 }
                                             initDone = true

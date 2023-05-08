@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,28 +48,42 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(getString(R.string.count_data_updates), fontSize = 23.sp)
-                                    Text(
-                                        text = getString(R.string.count_data_updates_values).format(
-                                            updateCounter
-                                        ),
-                                        fontSize = 23.sp
-                                    )
-                                }
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceEvenly,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            getString(R.string.count_data_updates),
+                                            fontSize = 23.sp
+                                        )
+                                        Text(
+                                            text = getString(R.string.count_data_updates_values).format(
+                                                updateCounter
+                                            ),
+                                            fontSize = 23.sp
+                                        )
+                                    }
                                 Spacer(modifier = Modifier.height(20.dp))
-                                if (loading) {
-                                    if (!currentLocation.hasAccuracy) {
-                                        Row(
-                                            horizontalArrangement = Arrangement.Center,
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            CircularProgressIndicator(modifier = Modifier.size(100.dp))
-                                        }
-                                    } else {
+                                if (!currentLocation.hasAccuracy && loading) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        CircularProgressIndicator(modifier = Modifier.size(100.dp))
+                                    }
+                                }
+                                AnimatedVisibility(
+                                    visible = currentLocation.hasAccuracy && loading,
+                                    enter = slideInVertically(
+                                        initialOffsetY = { -800 },
+                                        animationSpec = tween(durationMillis = 1000)
+                                    ),
+                                    exit = slideOutVertically(
+                                        targetOffsetY = { -8000 },
+                                        animationSpec = tween(durationMillis = 1000)
+                                    )
+                                ) {
+                                    Column() {
                                         Spacer(modifier = Modifier.height(50.dp))
                                         Row(
                                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -145,6 +161,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                     }
                                 }
+
                             }
                         }
                     }

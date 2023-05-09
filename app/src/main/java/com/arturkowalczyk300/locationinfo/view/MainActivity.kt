@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun InfoPresentation(
         currentLocation: Location,
-        loading: Boolean
+        loading: Boolean,
     ) {
         Box(contentAlignment = Alignment.TopStart, modifier = Modifier.padding(20.dp)) {
             Row(
@@ -103,85 +103,53 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(40.dp)) {
                             Spacer(modifier = Modifier.height(50.dp))
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp)
-                            ) {
-                                Text(
-                                    getString(R.string.location_info_lat),
-                                    fontSize = 29.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = getString(R.string.location_info_lat_value).format(
-                                        currentLocation.lat
-                                    ),
-                                    fontSize = 29.sp
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp)
-                            ) {
-                                Text(
-                                    getString(R.string.location_info_lng),
-                                    fontSize = 29.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = getString(R.string.location_info_lng_value).format(
-                                        currentLocation.lng
-                                    ),
-                                    fontSize = 29.sp
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp)
-                            ) {
-                                Text(
-                                    getString(R.string.location_info_altitude),
-                                    fontSize = 29.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = getString(R.string.location_info_altitude_value).format(
-                                        currentLocation.altitude
-                                    ),
-                                    fontSize = 29.sp
-                                )
-                            }
-                            if (currentLocation.hasAccuracy) {
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 10.dp, end = 10.dp)
-                                ) {
-                                    Text(
-                                        getString(R.string.location_info_accuracy),
-                                        fontSize = 29.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = getString(R.string.location_info_accuracy_value).format(
-                                            currentLocation.accuracy
-                                        ),
-                                        fontSize = 29.sp
-                                    )
-                                }
-                            }
+                            InfoRow(
+                                R.string.location_info_lat,
+                                R.string.location_info_lat_value,
+                                currentLocation.lat
+                            )
+                            InfoRow(
+                                R.string.location_info_lng,
+                                R.string.location_info_lng_value,
+                                currentLocation.lng
+                            )
+                            InfoRow(
+                                R.string.location_info_altitude,
+                                R.string.location_info_altitude_value,
+                                currentLocation.altitude
+                            )
+                            InfoRow(
+                                R.string.location_info_accuracy,
+                                R.string.location_info_accuracy_value,
+                                currentLocation.accuracy.toDouble()
+                            )
                         }
                     }
 
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun InfoRow(labelStringId: Int, valueStringId: Int, value: Double) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp, end = 10.dp)
+        ) {
+            Text(
+                getString(labelStringId),
+                fontSize = 29.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = getString(valueStringId).format(
+                    value
+                ),
+                fontSize = 29.sp
+            )
         }
     }
 

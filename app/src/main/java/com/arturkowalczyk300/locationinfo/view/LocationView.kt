@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,6 +82,7 @@ fun LocationView(
                             currentLocation.accuracy.toDouble(),
                             context
                         )
+
                         var currentPosition = remember {
                             LatLng(
                                 currentLocation.lat,
@@ -92,9 +94,17 @@ fun LocationView(
                                 currentPosition, 10.0f
                             )
                         }
+                        var uiSettings = remember {
+                            MapUiSettings().copy(mapToolbarEnabled = true).copy(myLocationButtonEnabled = true)
+                        }
+                        var mapProperties = remember{
+                            MapProperties().copy(isMyLocationEnabled = true)
+                        }
                         GoogleMap(
                             modifier = Modifier.fillMaxWidth(),
-                            cameraPositionState = cameraPositionState
+                            cameraPositionState = cameraPositionState,
+                            uiSettings = uiSettings,
+                            properties = mapProperties
                         ) {
                             Marker(
                                 state = MarkerState(

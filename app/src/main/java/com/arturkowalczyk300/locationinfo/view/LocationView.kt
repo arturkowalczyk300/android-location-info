@@ -1,11 +1,14 @@
 package com.arturkowalczyk300.locationinfo.view
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import com.arturkowalczyk300.locationinfo.R
 import com.arturkowalczyk300.locationinfo.model.Location
 import com.google.android.gms.maps.model.CameraPosition
@@ -89,31 +93,49 @@ fun LocationView(
                                 currentLocation.lng
                             )
                         }
+
                         var cameraPositionState = rememberCameraPositionState {
                             position = CameraPosition.fromLatLngZoom(
                                 currentPosition, 10.0f
                             )
                         }
-                        var uiSettings = remember {
-                            MapUiSettings().copy(mapToolbarEnabled = true).copy(myLocationButtonEnabled = true)
-                        }
-                        var mapProperties = remember{
-                            MapProperties().copy(isMyLocationEnabled = true)
-                        }
-                        GoogleMap(
-                            modifier = Modifier.fillMaxWidth(),
-                            cameraPositionState = cameraPositionState,
-                            uiSettings = uiSettings,
-                            properties = mapProperties
-                        ) {
-                            Marker(
-                                state = MarkerState(
-                                    position = LatLng(
-                                        currentLocation.lat,
-                                        currentLocation.lng
+                        Box() {
+                            GoogleMap(
+                                modifier = Modifier.fillMaxWidth(),
+                                cameraPositionState = cameraPositionState,
+                            ) {
+                                Marker(
+                                    state = MarkerState(
+                                        position = LatLng(
+                                            currentLocation.lat,
+                                            currentLocation.lng
+                                        )
                                     )
                                 )
-                            )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(end = 5.dp)
+                            ) {
+                                MapToolbar(
+                                    buttonCurrentLocationOnClickListener = {
+                                        cameraPositionState.position =
+                                            CameraPosition.fromLatLngZoom(
+                                                LatLng(
+                                                    currentLocation.lat,
+                                                    currentLocation.lng
+                                                ), 10.0f
+                                            )
+                                    },
+                                    buttonOpenInMapsOnClickListener = {
+                                        val intentUri =
+                                            Uri.parse("geo:${currentLocation.lat}.${currentLocation.lng}?z=10")
+                                        val mapIntent = Intent(Intent.ACTION_VIEW, intentUri)
+                                        mapIntent.setPackage("com.google.android.apps.maps")
+                                        context.startActivity(mapIntent)
+                                    })
+                            }
                         }
                     }
                 }

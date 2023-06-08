@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -127,21 +128,20 @@ class MainActivity : AppCompatActivity() {
                         ),
                         modifier = Modifier
                             .width(350.dp)
-                            .padding(vertical = 15.dp)
+                            .weight(0.45f)
                     ) {
                         if (!isLoading)
                             Text(
                                 text = getString(R.string.loading_gps_start),
                                 fontSize = 22.sp,
-                                modifier = Modifier.padding(vertical = 15.dp)
                             )
                         else
                             Text(
                                 text = getString(R.string.loading_gps_stop),
                                 fontSize = 22.sp,
-                                modifier = Modifier.padding(vertical = 15.dp)
                             )
                     }
+                    Spacer(modifier = Modifier.weight(0.1f))
                     Button(
                         onClick = {
                             shareCurrentLocation(currentLocation)
@@ -152,37 +152,16 @@ class MainActivity : AppCompatActivity() {
                         shape = RoundedCornerShape(20),
                         modifier = Modifier
                             .width(350.dp)
-                            .padding(top = 15.dp, bottom = 10.dp)
+                            .weight(0.45f)
                     ) {
                         Text(
                             text = getString(R.string.share_gps_location),
                             fontSize = 22.sp,
-                            modifier = Modifier.padding(vertical = 15.dp)
                         )
                     }
                 }
             }
         }
-    }
-
-    @Composable
-    fun MapView(
-        modifier: Modifier,
-        onMapReadyCallback: OnMapReadyCallback,
-    ) { //TODO: move to another file
-        AndroidView(
-            //modifier = Modifier.fillMaxSize(),
-            factory = { context ->
-                val view = layoutInflater.inflate(R.layout.map_fragment, null, false)
-                view
-            },
-            update = { view ->
-                (supportFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment).apply {
-                    getMapAsync(onMapReadyCallback)
-                }
-            },
-            modifier = modifier
-        )
     }
 
     private fun requireRuntimePermissions() {

@@ -14,5 +14,7 @@ I'm planning constant development of this project. In closest future I want to a
 - [ ] Add more information (like number of available satellites and quality of signal)
 - [ ] Possibility to save favorites location to local database
 
-# Demo
+# Demo  
+**Attached GIF file has big size, it may take a longer while to be loaded.**<br/></br>
+
 <img src="res/demo.gif" alt="Demo" width="40%" height="40%"> 
